@@ -1,6 +1,5 @@
 require 'native'
-require 'promise'
-
+require 'bowser/promise'
 require 'bowser/http/request'
 require 'bowser/http/form_data'
 
