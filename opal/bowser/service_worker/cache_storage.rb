@@ -66,10 +66,6 @@ module Bowser
           `#@native.put(#{request.to_n}, #{response.to_n})`
         end
 
-        def respond_with promise
-          promise.then
-        end
-
         def to_n
           @native
         end
