@@ -13,7 +13,7 @@ module Bowser
       end
 
       def client_id
-        `#@native.client_id`
+        `#@native.clientId`
       end
 
       def request
