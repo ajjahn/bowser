@@ -13,11 +13,6 @@ require 'bowser/service_worker/promise'
 module Bowser
   module ServiceWorker
     class Context
-      @native = `worker`
-      def self.instance
-        @instance ||= new(@native)
-      end
-
       def initialize native
         @native = native
       end
@@ -58,14 +53,10 @@ module Bowser
   end
 end
 
-def worker
-  Bowser::ServiceWorker::Context.instance
+def self.worker
+  Bowser::ServiceWorker::Context.new(`worker`)
 end
 
-def caches
-  worker.caches
-end
-
-def fetch url
-  worker.fetch url
+def self.method_missing(*args, &block)
+  worker.send(*args, &block)
 end
