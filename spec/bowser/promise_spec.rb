@@ -165,6 +165,23 @@ module Bowser
           expect(promise.value).to eq 42
         end
 
+        # Just a bit of a sanity check for the previous spec
+        it 'handles long promise chains' do
+          promises = Array.new(50) { Promise.new }
+
+          promise.resolve promises.first
+          (0...promises.length - 1).each do |index|
+            promises[index].resolve promises[index + 1]
+          end
+
+          expect(promise).to be_pending
+
+          promises.last.resolve 42
+
+          expect(promise).to be_resolved
+          expect(promise.value).to eq 42
+        end
+
         it 'rejects with the reason of the promise' do
           promise.resolve value
           expect(promise).to be_pending
