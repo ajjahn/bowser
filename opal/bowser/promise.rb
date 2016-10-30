@@ -49,6 +49,11 @@ module Bowser
       Promise.new do |resolve, _, p|
         @on_resolve << proc { |value| resolve[yield value] } if block_given?
         @children << p
+
+        if resolved?
+          yield value
+          resolve[value]
+        end
       end
     end
 
@@ -56,6 +61,11 @@ module Bowser
       Promise.new do |_, reject, p|
         @on_reject << block if block_given?
         @children << p
+
+        if rejected?
+          yield reason
+          reject[reason]
+        end
       end
     end
     alias fail catch

@@ -84,6 +84,16 @@ module Bowser
 
         expect(p2).to be_a Promise
       end
+
+      it 'executes the block if already resolved' do
+        promise.resolve 42
+
+        x = nil
+        p2 = promise.then { |value| x = value }
+
+        expect(x).to eq 42
+        expect(p2).to be_resolved
+      end
     end
 
     describe 'catch' do
@@ -116,6 +126,16 @@ module Bowser
         promise.reject 1
 
         expect(x).to eq 2
+      end
+
+      it 'returns a rejected promise if already rejected' do
+        promise.reject 'omg'
+
+        x = nil
+        p2 = promise.catch { |reason| x = reason }
+
+        expect(x).to eq 'omg'
+        expect(p2).to be_rejected
       end
     end
 
