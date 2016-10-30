@@ -10,6 +10,31 @@ module Bowser
       new { |_, reject| reject.call reason }
     end
 
+    def self.all(promises)
+      new do |resolve, reject, p|
+        promises.each do |promise|
+          promise
+            .then do |value|
+              if promises.all?(&:resolved?)
+                resolve[promises.map(&:value)]
+              end
+            end
+            .catch do |reason|
+              reject[reason]
+            end
+        end
+      end
+    end
+
+    def self.race(promises)
+      new do |resolve, reject|
+        promises.each do |promise|
+          promise.then { |value| resolve[value] }
+          promise.catch { |reason| reject.call(reason) }
+        end
+      end
+    end
+
     def initialize
       @on_resolve = []
       @on_reject = []
@@ -47,6 +72,8 @@ module Bowser
         return
       end
 
+      @value = value
+
       @on_resolve.each do |block|
         block.call value
       end
@@ -54,8 +81,9 @@ module Bowser
         child.resolve value
       end
 
-      @value = value
+      value
     rescue => e
+      remove_instance_variable :@value
       reject e
     end
 

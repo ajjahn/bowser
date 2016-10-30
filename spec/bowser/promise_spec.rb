@@ -201,5 +201,57 @@ module Bowser
         end
       end
     end
+
+    describe 'Promise.all' do
+      it 'resolves when all promise arguments are resolved' do
+        promises = Array.new(5) do
+          Promise.new
+        end
+
+        p = Promise.all(promises)
+
+        4.times do |i|
+          promises[i].resolve i
+          expect(p).not_to be_resolved
+        end
+
+        promises[4].resolve 4
+        expect(p).to be_resolved
+        expect(p.value).to eq [0, 1, 2, 3, 4]
+      end
+
+      it 'rejects if any promise arguments are rejected' do
+        promises = Array.new(5) { Promise.new }
+
+        p = Promise.all(promises)
+
+        promises.first.reject 'omg'
+
+        expect(p).to be_rejected
+        expect(p.reason).to eq 'omg'
+      end
+    end
+
+    describe 'Promise.race' do
+      it 'resolves when any promise argument is resolved' do
+        promises = Array.new(5) { Promise.new }
+        p = Promise.race(promises)
+
+        promises.first.resolve 42
+
+        expect(p).to be_resolved
+        expect(p.value).to eq 42
+      end
+
+      it 'rejects if any are rejected first' do
+        promises = Array.new(5) { Promise.new }
+        p = Promise.race(promises)
+
+        promises.first.reject 'omg'
+
+        expect(p).to be_rejected
+        expect(p.reason).to eq 'omg'
+      end
+    end
   end
 end
