@@ -69,6 +69,18 @@ module Bowser
       expect(`#{element.to_n} === #{native}`).to be_truthy
     end
 
+    describe :data do
+      let(:native) do
+        `elem = document.createElement('div')`
+        `elem.dataset['firstName'] = 'foo'`
+        `elem`
+      end
+
+      it 'returns the dataset of the element' do
+        expect(element.data.first_name).to eq('foo')
+      end
+    end
+
     describe :== do
       let(:native) { `document.createElement('div')` }
 

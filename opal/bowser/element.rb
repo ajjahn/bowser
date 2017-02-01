@@ -1,5 +1,6 @@
 require 'bowser/event_target'
 require 'bowser/file_list'
+require 'bowser/data_set'
 
 module Bowser
   class Element
@@ -76,6 +77,10 @@ module Bowser
 
     def files
       FileList.new(`#@native.files`)
+    end
+
+    def data
+      DataSet.new(`#@native.dataset`)
     end
 
     # Fall back to native properties.
